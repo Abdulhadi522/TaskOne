@@ -2,26 +2,32 @@
 
 
 
-namespace Database\Seeders;  
+namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;  
-use App\Models\Comment;  
+use Illuminate\Database\Seeder;
+use App\Models\Comment;
+use App\Models\Poadcast;
+use App\Models\User;
 
-class CommentSeeder extends Seeder  
-{  
-    public function run()  
-    {  
-        // Create top-level comments  
-        $topLevelComments = Comment::factory()->count(100)->create();  
+class CommentSeeder extends Seeder
+{
+    public function run()
+    {
 
-        // Create nested comments for a subset of the top-level comments  
-        foreach ($topLevelComments as $comment) {  
-            // Random chance to create a nested comment (50% in this case)  
-            if (random_int(0, 1) === 1) { // Change to $faker->boolean() for more variability  
-                Comment::factory()->nested(null)->create([  
-                    'parent_id' => $comment->id, // Set the parent_id to the current comment's ID  
-                ]);  
-            }  
-        }  
-    }  
-}  
+        $poadcasts = Poadcast::all();
+        $users = User::all();
+        foreach ($poadcasts as $poadcast) {
+            $comments = Comment::factory(5)->create([
+                'poadcast_id' => $poadcast->id,
+                'user_id' => $users->random()->id,
+            ]);
+        foreach ($comments as $comment) {
+            Comment::factory(2)->create([
+                'poadcast_id' => $poadcast->id,
+                'parent_id' => $comment->id,
+                'user_id' => $users->random()->id,
+            ]);
+        }
+    }
+    }
+}

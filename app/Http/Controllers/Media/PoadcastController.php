@@ -3,24 +3,27 @@
 
 namespace App\Http\Controllers\Media;
 
-use Illuminate\Http\Request;  
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PoadcastRequest;
+use App\Http\Resources\PodcastRandomResource;
 use App\Models\Poadcast;
 use App\Services\PodcastService;
 use App\Trait\ResponseStorageTrait;
+use App\Actions\CreatePodcastAction;
+use Illuminate\Support\Facades\Cache;
 
 class PoadcastController extends Controller
 {
     use ResponseStorageTrait;
 
-    protected $podcastService;
+    protected $podcastService, $createpodcast;
 
-    public function __construct(PodcastService $podcastService)
+    public function __construct(PodcastService $podcastService, CreatePodcastAction $createpodcast)
     {
 
         $this->podcastService = $podcastService;
+        $this->createpodcast = $createpodcast;
     }
 
 
@@ -31,20 +34,21 @@ class PoadcastController extends Controller
 
         $coverPath = $this->podcastService->CoverPath($request);
 
-        $this->podcastService->StorePodcast($request, $audioPath, $coverPath);
+        $this->createpodcast->StorePodcast($request, $audioPath, $coverPath);
 
         return $this->SuccessResponse('Your Podcast Uploaded Successfully', 200);
     }
 
 
-    public function index(Request $request)
+    public function index()
     {
-        // Default to 10 podcasts per page, but allow customization through query parameter  
-        $perPage = $request->input('per_page', 10);  
-
-        // Fetch random podcasts  
-        $podcasts = Poadcast::inRandomOrder()->paginate($perPage);
-
-        return response()->json($podcasts);
+        $randomIds = Poadcast::inRandomOrder()->limit(50)->pluck('id')->toArray();
+        Cache::put('random_podcast_ids', $randomIds, now()->addMinutes(5));
+        $randomIds = Cache::get('random_podcast_ids', []);
+        $selected = collect($randomIds)->shuffle()->take(10);
+        $podcasts = Poadcast::with(['categories', 'user'])
+            ->whereIn('id', $selected)
+            ->get();
+        return PodcastRandomResource::collection($podcasts);
     }
 }

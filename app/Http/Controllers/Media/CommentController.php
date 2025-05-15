@@ -5,26 +5,27 @@ namespace App\Http\Controllers\Media;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CommentRequest;
+use App\Http\Resources\CommentResource;
 use App\Models\Comment;
-use App\Services\CommentService;
 use App\Trait\ResponseStorageTrait;
+use App\Actions\CreateCommentAction;
 
 class CommentController extends Controller
 {
 
     use ResponseStorageTrait;
-    protected $commentService;
+    protected $commentAction;
 
 
-    public function __construct(CommentService $commentService)
+    public function __construct(CreateCommentAction $commentAction)
     {
-        $this->commentService = $commentService;
+        $this->commentAction = $commentAction;
     }
 
     public function store(CommentRequest $request, $poadcast_id)
     {
 
-        $this->commentService->createComment($request, $poadcast_id);
+        $this->commentAction->createComment($request, $poadcast_id);
 
         return $this->SuccessResponse('Your Comment Stored Successfully');
     }
@@ -33,8 +34,10 @@ class CommentController extends Controller
     public function GetAllCommentsWithReplies()
     {
 
-        $comments = Comment::whereNull('parent_id')->get();
-        return ($comments);
+        $comments = Comment::whereNull('parent_id')
+            ->with('children')
+            ->get();
 
+        return CommentResource::collection($comments);
     }
 }

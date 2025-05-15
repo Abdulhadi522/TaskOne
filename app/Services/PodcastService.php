@@ -22,19 +22,5 @@ class PodcastService
         return $coverPath;
     }
 
-    public function StorePodcast(PoadcastRequest $request, $audioPath, $coverPath)
-    {
-    
 
-            $poadcast = Poadcast::create([
-                'user_id' => Auth::user()->id,
-                'title' => $request->title,
-                'description' => $request->description,
-                'audio_file' => $audioPath,
-                'cover_image' => $coverPath,
-            ]);
-            
-            return $poadcast;
-        
-    }
 }

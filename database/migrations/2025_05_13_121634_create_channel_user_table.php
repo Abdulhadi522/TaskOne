@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('channel_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('poadcast_id')->constrained()->onDelete('cascade');  
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');  
-            $table->string('text')->index();  
-            $table->foreignId('parent_id')->nullable()->constrained('comments')->onDelete('cascade');  
+            $table->foreignId('channel_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('comments');
+        Schema::dropIfExists('channel_user');
     }
 };

@@ -50,4 +50,9 @@ trait ResponseStorageTrait
         return response()->json(['message' => $msg], $code);  
     }
 
+    public static function CreateUnLikeMessage($msg,$code){
+
+        return response()->json(['message' => $msg], $code);  
+    }
+
 }

@@ -1,6 +1,5 @@
 <?php
 namespace App\Services;  
-use App\Exceptions\CustomException;
 use App\Trait\ResponseStorageTrait;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +15,7 @@ class LoginService
 
         } else {
             
-            throw new CustomException("Invalid credentials." , 400);
+            return $this->ErrorResponse('cenditials Not ound' , 404);
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Category;
+use App\Models\Channel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -21,12 +22,11 @@ class poadcastFactory extends Factory
         return [
             'user_id' => User::factory(),
             'category_id' => Category::factory(),
+            'channel_id' => Channel::factory(),
             'title' =>$this->faker->sentence(),
             'description' => $this->faker->paragraph(), 
             'audio_file' => $this->faker->filePath('public/audios'),
             'cover_image' =>$this->faker->imageUrl(),
-
-            
         ];
     }
 }

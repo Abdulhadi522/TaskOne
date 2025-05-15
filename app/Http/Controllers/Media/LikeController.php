@@ -3,40 +3,30 @@
 namespace App\Http\Controllers\Media;
 
 use App\Http\Controllers\Controller;
-use App\Models\Like;
-use Illuminate\Support\Facades\Auth;
-use App\Services\LikeService;
+
+use App\Actions\LikeAction;
+use App\Actions\UnlikeAction;
 
 class LikeController extends Controller
 {
-    protected $likeService;
+    protected $likeAction, $unlikeAction;
 
-    public function __construct(LikeService $likeService) {
-        $this->likeService = $likeService;
+    public function __construct(LikeAction $likeAction, UnlikeAction $unlikeAction)
+    {
+        $this->likeAction = $likeAction;
+        $this->unlikeAction = $unlikeAction;
     }
 
-    public function like($poadcastId)  
-    {  
-        return $this->likeService->like($poadcastId);
-    }  
+    public function like($poadcastId)
+    {
+        return $this->likeAction->like($poadcastId);
+    }
 
     /**  
      * Unlike a podcast.  
-     */  
-    public function unlike($poadcastId)  
-    {  
-        $userId = Auth::id();  
-
-        // Find the like record  
-        $like = Like::where('poadcast_id', $poadcastId)->where('user_id', $userId)->first();  
-
-        if (!$like) {  
-            return response()->json(['message' => 'Like not found.'], 404);  
-        }  
-
-        // Delete the like  
-        $like->delete();  
-
-        return response()->json(['message' => 'Podcast unliked successfully!'], 200);  
-    }  
+     */
+    public function unlike($poadcastId)
+    {
+        return $this->unlikeAction->unlike($poadcastId);
+    }
 }

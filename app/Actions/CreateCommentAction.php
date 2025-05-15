@@ -1,12 +1,10 @@
 <?php
-
-namespace App\Services;
-
+namespace App\Actions;
 use App\Http\Requests\CommentRequest;
 use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
 
-class CommentService
+class CreateCommentAction
 {
 
     public function createComment(CommentRequest $request, $poadcast_id)
