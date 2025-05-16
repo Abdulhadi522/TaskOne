@@ -16,11 +16,11 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('channel_id')->constrained()->onDelete('cascade');
-            $table->string('title');
+            $table->string('title')->index();
             $table->longText('description');
             $table->string('audio_file');
             $table->string('cover_image')->nullable();
-            $table->unsignedBigInteger('views')->default(0);
+            $table->unsignedBigInteger('views')->default(0)->index();
             $table->timestamps();
         });
     }
